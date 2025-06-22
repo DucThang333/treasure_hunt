@@ -1,6 +1,6 @@
-import { Button, TextField, Grid, Divider, Alert } from '@mui/material';
+import { Button, TextField, Grid, Divider, Dialog, DialogTitle, DialogContent, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, Box, Chip, IconButton, DialogActions } from '@mui/material';
 import './appStyle.css';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Toast, useToast } from './components';
 
 function App() {
@@ -10,6 +10,7 @@ function App() {
   const [treasuresMap, setTreasuresMap] = useState([]);
   const [result, setResult] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
   const { toast, showError, hideToast } = useToast();
   //a
 
@@ -68,6 +69,24 @@ function App() {
     return true;
   },[treasure])
 
+  const handleViewHistory = (historyItem) => {
+    console.log("historyItem",historyItem);
+    setRows(historyItem.row);
+    setColumns(historyItem.col);
+    setTreasure(historyItem.treasure);
+    setTreasuresMap(historyItem.treasure_Map);
+    setResult({
+      solution: {
+        totalEnergyConsumed: historyItem.minimum_Path,
+        nodes: historyItem.track_Path.map((node)=>({
+          row: node.row,
+          col: node.col
+        }))
+      }
+    });
+    setHistoryDialogOpen(false);
+  }
+
   return (
     <div className="container">
       <div className="game-container">
@@ -89,7 +108,6 @@ function App() {
               <Grid item xs={12} md={4}>
                 <TextField
                   label="Số Cột"
-                  type="number"
                   placeholder="Nhập số cột"
                   value={columns}
                   onChange={(e) => setColumns(e.target.value)}
@@ -108,6 +126,11 @@ function App() {
                 <Button type='submit' variant='contained' color='primary' sx={{ height: '100%',paddingX: '20px' }} 
                 loading={isLoading}
                 >Tìm kho báu</Button>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <Button variant='contained' color='primary' sx={{ height: '100%',paddingX: '20px' }} 
+                onClick={()=>setHistoryDialogOpen(true)}
+                >Xem lịch sử</Button>
               </Grid>
             </Grid>
             <Divider sx={{ margin: '15px 0' }} />
@@ -159,7 +182,96 @@ function App() {
         severity={toast.severity}
         onClose={hideToast}
       />
+      <History open={historyDialogOpen} onClose={()=>setHistoryDialogOpen(false)} handleViewHistory={handleViewHistory} />
     </div>
+  );
+}
+
+
+function History({open, onClose , handleViewHistory}) {
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(()=>{
+    if (open) {
+      setLoading(true);
+      fetch(`${process.env.REACT_APP_API_URL}/api/TreasuareHunt/history`)
+      .then((res) => res.json())
+      .then((data) => {
+        setHistory(data.data || []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching history:', error);
+        setLoading(false);
+      });
+    }
+  },[open]);
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString('vi-VN');
+  };
+
+  return (
+    <>
+      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>  
+        <DialogTitle>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Lịch sử tìm kho báu</Typography>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          {loading ? (
+            <Box display="flex" justifyContent="center" p={3}>
+              <Typography>Đang tải...</Typography>
+            </Box>
+          ) : history.length === 0 ? (
+            <Box display="flex" justifyContent="center" p={3}>
+              <Typography color="text.secondary">Chưa có lịch sử nào</Typography>
+            </Box>
+          ) : (
+            <TableContainer>
+              <Table sx={{ minWidth: 650 }} aria-label="history table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>Số hàng</TableCell>
+                    <TableCell>Số cột</TableCell>
+                    <TableCell>Kho báu</TableCell>
+                    <TableCell>Tổng năng lượng</TableCell>
+                    <TableCell>Ngày tạo</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {history.map((item) => (
+                    <TableRow key={item.id} hover onClick={()=>handleViewHistory(item)}>
+                      <TableCell>{item.id}</TableCell>
+                      <TableCell>
+                        {item.row}
+                      </TableCell>
+                      <TableCell>
+                        {item.col}
+                      </TableCell>
+                      <TableCell>
+                        {item.treasure}
+                      </TableCell>
+                      <TableCell>
+                        {Number(item.minimum_Path.toFixed(6))}
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2">
+                          {formatDate(item.createdAt)}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 

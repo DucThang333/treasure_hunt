@@ -50,7 +50,7 @@ Solves a treasure hunt puzzle and saves the result to history.
         "step": 2,
         "key": 3
       }
-    ],
+    ],open
     "totalEnergyConsumed": 2.0
   },
   "databaseSave": {
@@ -69,9 +69,7 @@ Solves a treasure hunt puzzle and saves the result to history.
     "nodes": [
       {
         "row": 0,
-        "col": 0,
-        "step": 0,
-        "key": 1
+        "col": 0,open
       },
       {
         "row": 0,
