@@ -167,7 +167,7 @@ function App() {
             </div>
             {result?.solution && (
               <>
-                <p>Tổng năng lượng cần thiết: {Number(result?.solution?.totalEnergyConsumed).toFixed(6)}</p>
+                <p>Tổng năng lượng cần thiết: {Number(result?.solution?.totalEnergyConsumed.toFixed(6))}</p>
                 <p>Những vị trí cần đi qua: {result?.solution?.nodes?.map((node)=> `[${node.row},${node.col}]`).join(" -> ")}</p>
               </>
             )}
