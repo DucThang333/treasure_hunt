@@ -20,3 +20,15 @@ public class TreasureHuntRequest
     public int[][] Treasure_Map { get; set; } = new int[0][];
 }
 
+
+public class Solution {
+    public List<SolutionNode> Nodes { get; set; } = new List<SolutionNode>();
+    public double TotalEnergyConsumed { get; set; }
+}
+
+public class SolutionNode {
+    public int Row { get; set; }
+    public int Col { get; set; }
+    public int Step { get; set; }
+    public int Key { get; set; }
+}

@@ -2774,11 +2774,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/thang/projects/treasure-hunt/backend/backend.csproj",
+      "projectUniqueName": "/home/thang/projects/treasure_hunt/backend/backend.csproj",
       "projectName": "backend",
-      "projectPath": "/home/thang/projects/treasure-hunt/backend/backend.csproj",
+      "projectPath": "/home/thang/projects/treasure_hunt/backend/backend.csproj",
       "packagesPath": "/home/thang/.nuget/packages/",
-      "outputPath": "/home/thang/projects/treasure-hunt/backend/obj/",
+      "outputPath": "/home/thang/projects/treasure_hunt/backend/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/thang/.nuget/NuGet/NuGet.Config"

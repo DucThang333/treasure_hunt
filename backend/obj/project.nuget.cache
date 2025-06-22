@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "6I3sUfpIHkQ=",
+  "dgSpecHash": "AqIXFvsbfR8=",
   "success": true,
-  "projectFilePath": "/home/thang/projects/treasure-hunt/backend/backend.csproj",
+  "projectFilePath": "/home/thang/projects/treasure_hunt/backend/backend.csproj",
   "expectedPackageFiles": [
     "/home/thang/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/home/thang/.nuget/packages/microsoft.aspnetcore.openapi/8.0.17/microsoft.aspnetcore.openapi.8.0.17.nupkg.sha512",

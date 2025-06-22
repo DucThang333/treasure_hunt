@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
-
+using backend.models;
 namespace backend.db.Models;
 
 public class HistoryTreasure
@@ -34,9 +34,9 @@ public class HistoryTreasure
     public string Track_PathJson { get; set; } = string.Empty;
 
     [NotMapped]
-    public List<int> Track_Path
+    public List<SolutionNode> Track_Path
     {
-        get => JsonSerializer.Deserialize<List<int>>(Track_PathJson) ?? new List<int>();
+        get => JsonSerializer.Deserialize<List<SolutionNode>>(Track_PathJson) ?? new List<SolutionNode>();
         set => Track_PathJson = JsonSerializer.Serialize(value);
     }
 

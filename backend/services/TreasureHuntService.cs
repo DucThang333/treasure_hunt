@@ -14,7 +14,7 @@ public class TreasureHuntService
         _context = context;
     }
 
-    public Solution FindTreasure(TreasureHuntRequest data)
+    public async Task<(Solution solution, bool saveSuccess, string? errorMessage)> FindTreasure(TreasureHuntRequest data)
     {
         // để lưu chìa khóa lớn nhất đã tìm thấy
         int MaxKey = 0;
@@ -66,8 +66,32 @@ public class TreasureHuntService
             solutions = newSolutions;
         }
 
+        Solution result = solutions.FirstOrDefault(solution => solution.TotalEnergyConsumed == solutions.Min(s => s.TotalEnergyConsumed));
         
-        return solutions.FirstOrDefault(solution => solution.TotalEnergyConsumed == solutions.Min(s => s.TotalEnergyConsumed));
+        // Try to save data to database, but continue even if it fails
+        bool saveSuccess = true;
+        string? errorMessage = null;
+        
+        try
+        {
+            _context.HistoryTreasures.Add(new HistoryTreasure{
+                Row = data.Row,
+                Col = data.Col,
+                Treasure = data.Treasure,
+                Treasure_Map = data.Treasure_Map,
+                Minimum_Path = result.TotalEnergyConsumed,
+                Track_Path = result.Nodes
+            });
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            saveSuccess = false;
+            errorMessage = ex.Message;
+            Console.WriteLine($"Warning: Failed to save treasure hunt result to database: {ex.Message}");
+        }
+
+        return (result, saveSuccess, errorMessage);
     }
 
     public double CalculateEnergyConsumed(int currentRow, int currentCol, int nextRow, int nextCol) {
@@ -78,16 +102,31 @@ public class TreasureHuntService
     {
         return await _context.HistoryTreasures.FindAsync(id);
     }
+
+    /// <summary>
+    /// Get all treasure hunt history records
+    /// </summary>
+    /// <returns>List of all history records ordered by creation date (newest first)</returns>
+    public async Task<List<HistoryTreasure>> GetAllHistoryTreasureHunt()
+    {
+        return await _context.HistoryTreasures
+            .OrderByDescending(h => h.CreatedAt)
+            .ToListAsync();
+    }
 }
 
-public class Solution {
-    public List<SolutionNode> Nodes { get; set; } = new List<SolutionNode>();
-    public double TotalEnergyConsumed { get; set; }
+/// <summary>
+/// Generic pagination result class
+/// </summary>
+/// <typeparam name="T">Type of items in the result</typeparam>
+public class PaginatedResult<T>
+{
+    public List<T> Items { get; set; } = new List<T>();
+    public int TotalItems { get; set; }
+    public int TotalPages { get; set; }
+    public int CurrentPage { get; set; }
+    public int PageSize { get; set; }
+    public bool HasNextPage { get; set; }
+    public bool HasPreviousPage { get; set; }
 }
 
-public class SolutionNode {
-    public int Row { get; set; }
-    public int Col { get; set; }
-    public int Step { get; set; }
-    public int Key { get; set; }
-}
