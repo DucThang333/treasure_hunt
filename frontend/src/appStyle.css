@@ -1,0 +1,54 @@
+.container {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+}
+
+.game-container {
+  margin-top: 100px;
+  width: 80%;
+  padding: 20px;
+  background-color: rgb(230, 230, 230);
+  border-radius: 10px;
+  overflow: auto;
+}
+
+.game-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dialog-content {
+  min-height: 300px;
+}
+
+.treasures-map {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px;
+  overflow: auto;
+  height: 500px;
+}
+
+.treasures-map-row {
+  display: flex;
+  gap: 20px;
+}
+
+.treasures-map-cell {
+  width: 80px;
+  height: 60px;
+}
+
+/* Remove spinner buttons from number inputs */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner {
+  -moz-appearance: textfield;
+}
